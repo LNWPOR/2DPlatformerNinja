@@ -7,10 +7,12 @@ public class Player : MonoBehaviour {
   [SerializeField]
   private float movementSpeed;
   private bool facingRight;
+  private Animator myAnimator;
 
   void Start() {
     facingRight = true;
     myRigidbody = GetComponent<Rigidbody2D>();
+    myAnimator = GetComponent<Animator>();
   }
 
   void FixedUpdate() {
@@ -21,6 +23,7 @@ public class Player : MonoBehaviour {
 
   void HandleMovement(float horizontal) {
     myRigidbody.velocity = new Vector2(horizontal * movementSpeed, myRigidbody.velocity.y);
+    myAnimator.SetFloat("speed", Mathf.Abs(horizontal));
   }
 
   private void Flip(float horizontal) {
