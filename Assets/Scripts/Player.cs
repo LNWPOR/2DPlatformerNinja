@@ -9,6 +9,7 @@ public class Player : MonoBehaviour {
   private bool facingRight;
   private Animator myAnimator;
   private bool attack;
+  private bool slide;
 
   void Start() {
     facingRight = true;
@@ -32,12 +33,21 @@ public class Player : MonoBehaviour {
     if (Input.GetKeyDown(KeyCode.LeftShift)) {
       attack = true;
     }
+    if (Input.GetKeyDown(KeyCode.LeftControl)) {
+      slide = true;
+    }
   }
 
   void HandleMovement(float horizontal) {
-    if (!myAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Attack")) {
+    if (!myAnimator.GetBool("slide") && !myAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Attack")) {
       myRigidbody.velocity = new Vector2(horizontal * movementSpeed, myRigidbody.velocity.y);
     }
+    if (slide && !myAnimator.GetCurrentAnimatorStateInfo(0).IsName("Slide")) {
+      myAnimator.SetBool("slide", true);
+    } else if (!myAnimator.GetCurrentAnimatorStateInfo(0).IsName("Slide")) {
+      myAnimator.SetBool("slide", false);
+    }
+
     myAnimator.SetFloat("speed", Mathf.Abs(horizontal));
   }
 
@@ -59,5 +69,6 @@ public class Player : MonoBehaviour {
 
   private void ResetValues() {
     attack = false;
+    slide = false;
   }
 }
