@@ -8,6 +8,7 @@ public class Player : MonoBehaviour {
   private float movementSpeed;
   private bool facingRight;
   private Animator myAnimator;
+  private bool attack;
 
   void Start() {
     facingRight = true;
@@ -19,10 +20,24 @@ public class Player : MonoBehaviour {
     float horizontal = Input.GetAxis("Horizontal");
     HandleMovement(horizontal);
     Flip(horizontal);
+    HandleAttacks();
+    ResetValues();
+  }
+
+  private void Update() {
+    HandleInput();
+  }
+
+  void HandleInput() {
+    if (Input.GetKeyDown(KeyCode.LeftShift)) {
+      attack = true;
+    }
   }
 
   void HandleMovement(float horizontal) {
-    myRigidbody.velocity = new Vector2(horizontal * movementSpeed, myRigidbody.velocity.y);
+    if (!myAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Attack")) {
+      myRigidbody.velocity = new Vector2(horizontal * movementSpeed, myRigidbody.velocity.y);
+    }
     myAnimator.SetFloat("speed", Mathf.Abs(horizontal));
   }
 
@@ -35,4 +50,14 @@ public class Player : MonoBehaviour {
     }
   }
 
+  private void HandleAttacks() {
+    if (attack && !myAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Attack")) {
+      myAnimator.SetTrigger("attack");
+      myRigidbody.velocity = Vector2.zero;
+    }
+  }
+
+  private void ResetValues() {
+    attack = false;
+  }
 }
